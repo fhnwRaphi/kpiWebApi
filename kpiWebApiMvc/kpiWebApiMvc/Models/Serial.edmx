@@ -1,0 +1,408 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="EOSModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="eMaterial">
+          <Key>
+            <PropertyRef Name="MaterialId" />
+          </Key>
+          <Property Name="MaterialId" Type="int" Nullable="false" />
+          <Property Name="name" Type="varchar" MaxLength="50" />
+          <Property Name="materialType" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="materialClass" Type="varchar" MaxLength="5" />
+          <Property Name="dispoAttribute" Type="varchar" MaxLength="2" />
+          <Property Name="priceVar" Type="smallmoney" Nullable="false" />
+          <Property Name="priceFix" Type="smallmoney" Nullable="false" />
+          <Property Name="priceControll" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="dispGroup" Type="varchar" MaxLength="3" />
+          <Property Name="purchGroup" Type="varchar" MaxLength="3" />
+        </EntityType>
+        <EntityType Name="eOrder">
+          <Key>
+            <PropertyRef Name="OrderId" />
+          </Key>
+          <Property Name="OrderId" Type="int" Nullable="false" />
+          <Property Name="PcbId" Type="int" Nullable="false" />
+          <Property Name="orderCreateDate" Type="date" />
+          <Property Name="orderFinishDate" Type="date" />
+          <Property Name="orderPcNew" Type="smallint" Nullable="false" />
+          <Property Name="orderPcActual" Type="smallint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ePcb">
+          <Key>
+            <PropertyRef Name="PcbId" />
+          </Key>
+          <Property Name="PcbId" Type="int" Nullable="false" />
+          <Property Name="pcbTypeId" Type="int" Nullable="false" />
+          <Property Name="pcbClassId" Type="int" Nullable="false" />
+          <Property Name="serialPrefix" Type="varchar" MaxLength="5" />
+          <Property Name="topThtPartCount" Type="int" Nullable="false" />
+          <Property Name="topSmtPartCount" Type="int" Nullable="false" />
+          <Property Name="botThtPartCount" Type="int" Nullable="false" />
+          <Property Name="botSmtPartCount" Type="int" Nullable="false" />
+          <Property Name="thtSolderJoints" Type="int" Nullable="false" />
+          <Property Name="smtSolderJoints" Type="int" Nullable="false" />
+          <Property Name="squareInch" Type="real" Nullable="false" />
+          <Property Name="activationDate" Type="datetime" Nullable="false" />
+          <Property Name="decomissionDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="eSerial">
+          <Key>
+            <PropertyRef Name="SerialId" />
+          </Key>
+          <Property Name="SerialId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SerialIdEan" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="OrderId" Type="int" Nullable="false" />
+          <Property Name="status" Type="smallint" Nullable="false" />
+          <Property Name="rootOrderId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="rOrderProcess">
+          <Key>
+            <PropertyRef Name="orderId" />
+            <PropertyRef Name="processId" />
+          </Key>
+          <Property Name="orderId" Type="int" Nullable="false" />
+          <Property Name="processId" Type="int" Nullable="false" />
+          <Property Name="processStep" Type="smallint" Nullable="false" />
+          <Property Name="confirmTest" Type="bit" Nullable="false" />
+          <Property Name="confirmEos" Type="bit" Nullable="false" />
+          <Property Name="confirmSerial" Type="bit" Nullable="false" />
+          <Property Name="startDate" Type="datetime2" Precision="7" />
+          <Property Name="confirmDate" Type="datetime2" Precision="7" />
+          <Property Name="userId" Type="int" />
+          <Property Name="planDate" Type="datetime2" Precision="7" />
+          <Property Name="stepState" Type="smallint" />
+        </EntityType>
+        <Association Name="fkOrderProcessRefOrder">
+          <End Role="eOrder" Type="Self.eOrder" Multiplicity="1" />
+          <End Role="rOrderProcess" Type="Self.rOrderProcess" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="eOrder">
+              <PropertyRef Name="OrderId" />
+            </Principal>
+            <Dependent Role="rOrderProcess">
+              <PropertyRef Name="orderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fkOrderRefPcb">
+          <End Role="ePcb" Type="Self.ePcb" Multiplicity="1" />
+          <End Role="eOrder" Type="Self.eOrder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ePcb">
+              <PropertyRef Name="PcbId" />
+            </Principal>
+            <Dependent Role="eOrder">
+              <PropertyRef Name="PcbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fkPcbRefMaterial">
+          <End Role="eMaterial" Type="Self.eMaterial" Multiplicity="1" />
+          <End Role="ePcb" Type="Self.ePcb" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="eMaterial">
+              <PropertyRef Name="MaterialId" />
+            </Principal>
+            <Dependent Role="ePcb">
+              <PropertyRef Name="PcbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fkSerialRefOrder">
+          <End Role="eOrder" Type="Self.eOrder" Multiplicity="1" />
+          <End Role="eSerial" Type="Self.eSerial" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="eOrder">
+              <PropertyRef Name="OrderId" />
+            </Principal>
+            <Dependent Role="eSerial">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EOSModelStoreContainer">
+          <EntitySet Name="eMaterial" EntityType="Self.eMaterial" Schema="eos" store:Type="Tables" />
+          <EntitySet Name="eOrder" EntityType="Self.eOrder" Schema="eos" store:Type="Tables" />
+          <EntitySet Name="ePcb" EntityType="Self.ePcb" Schema="eos" store:Type="Tables" />
+          <EntitySet Name="eSerial" EntityType="Self.eSerial" Schema="eos" store:Type="Tables" />
+          <EntitySet Name="rOrderProcess" EntityType="Self.rOrderProcess" Schema="eos" store:Type="Tables" />
+          <AssociationSet Name="fkOrderProcessRefOrder" Association="Self.fkOrderProcessRefOrder">
+            <End Role="eOrder" EntitySet="eOrder" />
+            <End Role="rOrderProcess" EntitySet="rOrderProcess" />
+          </AssociationSet>
+          <AssociationSet Name="fkOrderRefPcb" Association="Self.fkOrderRefPcb">
+            <End Role="ePcb" EntitySet="ePcb" />
+            <End Role="eOrder" EntitySet="eOrder" />
+          </AssociationSet>
+          <AssociationSet Name="fkPcbRefMaterial" Association="Self.fkPcbRefMaterial">
+            <End Role="eMaterial" EntitySet="eMaterial" />
+            <End Role="ePcb" EntitySet="ePcb" />
+          </AssociationSet>
+          <AssociationSet Name="fkSerialRefOrder" Association="Self.fkSerialRefOrder">
+            <End Role="eOrder" EntitySet="eOrder" />
+            <End Role="eSerial" EntitySet="eSerial" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="EOSModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="eMaterial">
+          <Key>
+            <PropertyRef Name="MaterialId" />
+          </Key>
+          <Property Name="MaterialId" Type="Int32" Nullable="false" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="materialType" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="materialClass" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="dispoAttribute" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="priceVar" Type="Decimal" Precision="10" Scale="4" Nullable="false" />
+          <Property Name="priceFix" Type="Decimal" Precision="10" Scale="4" Nullable="false" />
+          <Property Name="priceControll" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="dispGroup" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="purchGroup" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ePcb" Relationship="Self.fkPcbRefMaterial" FromRole="eMaterial" ToRole="ePcb" />
+        </EntityType>
+        <EntityType Name="eOrder">
+          <Key>
+            <PropertyRef Name="OrderId" />
+          </Key>
+          <Property Name="OrderId" Type="Int32" Nullable="false" />
+          <Property Name="PcbId" Type="Int32" Nullable="false" />
+          <Property Name="orderCreateDate" Type="DateTime" Precision="0" />
+          <Property Name="orderFinishDate" Type="DateTime" Precision="0" />
+          <Property Name="orderPcNew" Type="Int16" Nullable="false" />
+          <Property Name="orderPcActual" Type="Int16" Nullable="false" />
+          <NavigationProperty Name="ePcb" Relationship="Self.fkOrderRefPcb" FromRole="eOrder" ToRole="ePcb" />
+          <NavigationProperty Name="eSerials" Relationship="Self.fkSerialRefOrder" FromRole="eOrder" ToRole="eSerial" />
+          <NavigationProperty Name="rOrderProcesses" Relationship="EOSModel.fkOrderProcessRefOrder" FromRole="eOrder" ToRole="rOrderProcess" />
+        </EntityType>
+        <EntityType Name="ePcb">
+          <Key>
+            <PropertyRef Name="PcbId" />
+          </Key>
+          <Property Name="PcbId" Type="Int32" Nullable="false" />
+          <Property Name="pcbTypeId" Type="Int32" Nullable="false" />
+          <Property Name="pcbClassId" Type="Int32" Nullable="false" />
+          <Property Name="serialPrefix" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="topThtPartCount" Type="Int32" Nullable="false" />
+          <Property Name="topSmtPartCount" Type="Int32" Nullable="false" />
+          <Property Name="botThtPartCount" Type="Int32" Nullable="false" />
+          <Property Name="botSmtPartCount" Type="Int32" Nullable="false" />
+          <Property Name="thtSolderJoints" Type="Int32" Nullable="false" />
+          <Property Name="smtSolderJoints" Type="Int32" Nullable="false" />
+          <Property Name="squareInch" Type="Single" Nullable="false" />
+          <Property Name="activationDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="decomissionDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="eMaterial" Relationship="Self.fkPcbRefMaterial" FromRole="ePcb" ToRole="eMaterial" />
+          <NavigationProperty Name="eOrders" Relationship="Self.fkOrderRefPcb" FromRole="ePcb" ToRole="eOrder" />
+        </EntityType>
+        <EntityType Name="eSerial">
+          <Key>
+            <PropertyRef Name="SerialId" />
+          </Key>
+          <Property Name="SerialId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SerialIdEan" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="OrderId" Type="Int32" Nullable="false" />
+          <Property Name="status" Type="Int16" Nullable="false" />
+          <Property Name="rootOrderId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="eOrder" Relationship="Self.fkSerialRefOrder" FromRole="eSerial" ToRole="eOrder" />
+        </EntityType>
+        <EntityType Name="rOrderProcess">
+          <Key>
+            <PropertyRef Name="orderId" />
+            <PropertyRef Name="processId" />
+          </Key>
+          <Property Name="orderId" Type="Int32" Nullable="false" />
+          <Property Name="processId" Type="Int32" Nullable="false" />
+          <Property Name="processStep" Type="Int16" Nullable="false" />
+          <Property Name="confirmTest" Type="Boolean" Nullable="false" />
+          <Property Name="confirmEos" Type="Boolean" Nullable="false" />
+          <Property Name="confirmSerial" Type="Boolean" Nullable="false" />
+          <Property Name="startDate" Type="DateTime" Precision="7" />
+          <Property Name="confirmDate" Type="DateTime" Precision="7" />
+          <Property Name="userId" Type="Int32" />
+          <Property Name="planDate" Type="DateTime" Precision="7" />
+          <Property Name="stepState" Type="Int16" />
+          <NavigationProperty Name="eOrder" Relationship="EOSModel.fkOrderProcessRefOrder" FromRole="rOrderProcess" ToRole="eOrder" />
+        </EntityType>
+        <Association Name="fkPcbRefMaterial">
+          <End Role="eMaterial" Type="Self.eMaterial" Multiplicity="1" />
+          <End Role="ePcb" Type="Self.ePcb" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="eMaterial">
+              <PropertyRef Name="MaterialId" />
+            </Principal>
+            <Dependent Role="ePcb">
+              <PropertyRef Name="PcbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fkOrderRefPcb">
+          <End Role="ePcb" Type="Self.ePcb" Multiplicity="1" />
+          <End Role="eOrder" Type="Self.eOrder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ePcb">
+              <PropertyRef Name="PcbId" />
+            </Principal>
+            <Dependent Role="eOrder">
+              <PropertyRef Name="PcbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fkSerialRefOrder">
+          <End Role="eOrder" Type="Self.eOrder" Multiplicity="1" />
+          <End Role="eSerial" Type="Self.eSerial" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="eOrder">
+              <PropertyRef Name="OrderId" />
+            </Principal>
+            <Dependent Role="eSerial">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EOSEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="eMaterials" EntityType="Self.eMaterial" />
+          <EntitySet Name="eOrders" EntityType="Self.eOrder" />
+          <EntitySet Name="ePcbs" EntityType="Self.ePcb" />
+          <EntitySet Name="eSerials" EntityType="Self.eSerial" />
+          <EntitySet Name="rOrderProcesses" EntityType="Self.rOrderProcess" />
+          <AssociationSet Name="fkPcbRefMaterial" Association="Self.fkPcbRefMaterial">
+            <End Role="eMaterial" EntitySet="eMaterials" />
+            <End Role="ePcb" EntitySet="ePcbs" />
+          </AssociationSet>
+          <AssociationSet Name="fkOrderRefPcb" Association="Self.fkOrderRefPcb">
+            <End Role="ePcb" EntitySet="ePcbs" />
+            <End Role="eOrder" EntitySet="eOrders" />
+          </AssociationSet>
+          <AssociationSet Name="fkSerialRefOrder" Association="Self.fkSerialRefOrder">
+            <End Role="eOrder" EntitySet="eOrders" />
+            <End Role="eSerial" EntitySet="eSerials" />
+          </AssociationSet>
+          <AssociationSet Name="fkOrderProcessRefOrder" Association="EOSModel.fkOrderProcessRefOrder">
+            <End Role="eOrder" EntitySet="eOrders" />
+            <End Role="rOrderProcess" EntitySet="rOrderProcesses" />
+          </AssociationSet>
+        </EntityContainer>
+        <Association Name="fkOrderProcessRefOrder">
+          <End Type="EOSModel.eOrder" Role="eOrder" Multiplicity="1" />
+          <End Type="EOSModel.rOrderProcess" Role="rOrderProcess" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="eOrder">
+              <PropertyRef Name="OrderId" />
+            </Principal>
+            <Dependent Role="rOrderProcess">
+              <PropertyRef Name="orderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="EOSModelStoreContainer" CdmEntityContainer="EOSEntities">
+          <EntitySetMapping Name="eMaterials">
+            <EntityTypeMapping TypeName="EOSModel.eMaterial">
+              <MappingFragment StoreEntitySet="eMaterial">
+                <ScalarProperty Name="MaterialId" ColumnName="MaterialId" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="materialType" ColumnName="materialType" />
+                <ScalarProperty Name="materialClass" ColumnName="materialClass" />
+                <ScalarProperty Name="dispoAttribute" ColumnName="dispoAttribute" />
+                <ScalarProperty Name="priceVar" ColumnName="priceVar" />
+                <ScalarProperty Name="priceFix" ColumnName="priceFix" />
+                <ScalarProperty Name="priceControll" ColumnName="priceControll" />
+                <ScalarProperty Name="dispGroup" ColumnName="dispGroup" />
+                <ScalarProperty Name="purchGroup" ColumnName="purchGroup" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="eOrders">
+            <EntityTypeMapping TypeName="EOSModel.eOrder">
+              <MappingFragment StoreEntitySet="eOrder">
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="PcbId" ColumnName="PcbId" />
+                <ScalarProperty Name="orderCreateDate" ColumnName="orderCreateDate" />
+                <ScalarProperty Name="orderFinishDate" ColumnName="orderFinishDate" />
+                <ScalarProperty Name="orderPcNew" ColumnName="orderPcNew" />
+                <ScalarProperty Name="orderPcActual" ColumnName="orderPcActual" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ePcbs">
+            <EntityTypeMapping TypeName="EOSModel.ePcb">
+              <MappingFragment StoreEntitySet="ePcb">
+                <ScalarProperty Name="PcbId" ColumnName="PcbId" />
+                <ScalarProperty Name="pcbTypeId" ColumnName="pcbTypeId" />
+                <ScalarProperty Name="pcbClassId" ColumnName="pcbClassId" />
+                <ScalarProperty Name="serialPrefix" ColumnName="serialPrefix" />
+                <ScalarProperty Name="topThtPartCount" ColumnName="topThtPartCount" />
+                <ScalarProperty Name="topSmtPartCount" ColumnName="topSmtPartCount" />
+                <ScalarProperty Name="botThtPartCount" ColumnName="botThtPartCount" />
+                <ScalarProperty Name="botSmtPartCount" ColumnName="botSmtPartCount" />
+                <ScalarProperty Name="thtSolderJoints" ColumnName="thtSolderJoints" />
+                <ScalarProperty Name="smtSolderJoints" ColumnName="smtSolderJoints" />
+                <ScalarProperty Name="squareInch" ColumnName="squareInch" />
+                <ScalarProperty Name="activationDate" ColumnName="activationDate" />
+                <ScalarProperty Name="decomissionDate" ColumnName="decomissionDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="eSerials">
+            <EntityTypeMapping TypeName="EOSModel.eSerial">
+              <MappingFragment StoreEntitySet="eSerial">
+                <ScalarProperty Name="SerialId" ColumnName="SerialId" />
+                <ScalarProperty Name="SerialIdEan" ColumnName="SerialIdEan" />
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="rootOrderId" ColumnName="rootOrderId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="rOrderProcesses">
+            <EntityTypeMapping TypeName="EOSModel.rOrderProcess">
+              <MappingFragment StoreEntitySet="rOrderProcess">
+                <ScalarProperty Name="orderId" ColumnName="orderId" />
+                <ScalarProperty Name="processId" ColumnName="processId" />
+                <ScalarProperty Name="processStep" ColumnName="processStep" />
+                <ScalarProperty Name="confirmTest" ColumnName="confirmTest" />
+                <ScalarProperty Name="confirmEos" ColumnName="confirmEos" />
+                <ScalarProperty Name="confirmSerial" ColumnName="confirmSerial" />
+                <ScalarProperty Name="startDate" ColumnName="startDate" />
+                <ScalarProperty Name="confirmDate" ColumnName="confirmDate" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="planDate" ColumnName="planDate" />
+                <ScalarProperty Name="stepState" ColumnName="stepState" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="EOSModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="eMaterial">
+    <Key>
+      <PropertyRef Name="MaterialId" />
+    </Key>
+    <Property Name="MaterialId" Type="int" Nullable="false" />
+    <Property Name="name" Type="varchar" MaxLength="50" />
+    <Property Name="materialType" Type="varchar" MaxLength="5" Nullable="false" />
+    <Property Name="materialClass" Type="varchar" MaxLength="5" />
+    <Property Name="dispoAttribute" Type="varchar" MaxLength="2" />
+    <Property Name="priceVar" Type="smallmoney" Nullable="false" />
+    <Property Name="priceFix" Type="smallmoney" Nullable="false" />
+    <Property Name="priceControll" Type="varchar" MaxLength="1" Nullable="false" />
+    <Property Name="dispGroup" Type="varchar" MaxLength="3" />
+    <Property Name="purchGroup" Type="varchar" MaxLength="3" />
+  </EntityType>
+  <EntityType Name="eOrder">
+    <Key>
+      <PropertyRef Name="OrderId" />
+    </Key>
+    <Property Name="OrderId" Type="int" Nullable="false" />
+    <Property Name="PcbId" Type="int" Nullable="false" />
+    <Property Name="orderCreateDate" Type="date" />
+    <Property Name="orderFinishDate" Type="date" />
+    <Property Name="orderPcNew" Type="smallint" Nullable="false" />
+    <Property Name="orderPcActual" Type="smallint" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ePcb">
+    <Key>
+      <PropertyRef Name="PcbId" />
+    </Key>
+    <Property Name="PcbId" Type="int" Nullable="false" />
+    <Property Name="pcbTypeId" Type="int" Nullable="false" />
+    <Property Name="pcbClassId" Type="int" Nullable="false" />
+    <Property Name="serialPrefix" Type="varchar" MaxLength="5" />
+    <Property Name="topThtPartCount" Type="int" Nullable="false" />
+    <Property Name="topSmtPartCount" Type="int" Nullable="false" />
+    <Property Name="botThtPartCount" Type="int" Nullable="false" />
+    <Property Name="botSmtPartCount" Type="int" Nullable="false" />
+    <Property Name="thtSolderJoints" Type="int" Nullable="false" />
+    <Property Name="smtSolderJoints" Type="int" Nullable="false" />
+    <Property Name="squareInch" Type="real" Nullable="false" />
+    <Property Name="activationDate" Type="datetime" Nullable="false" />
+    <Property Name="decomissionDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="eSerial">
+    <Key>
+      <PropertyRef Name="SerialId" />
+    </Key>
+    <Property Name="SerialId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="SerialIdEan" Type="int" StoreGeneratedPattern="Computed" />
+    <Property Name="OrderId" Type="int" Nullable="false" />
+    <Property Name="status" Type="smallint" Nullable="false" />
+    <Property Name="rootOrderId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="rOrderProcess">
+    <Key>
+      <PropertyRef Name="orderId" />
+      <PropertyRef Name="processId" />
+    </Key>
+    <Property Name="orderId" Type="int" Nullable="false" />
+    <Property Name="processId" Type="int" Nullable="false" />
+    <Property Name="processStep" Type="smallint" Nullable="false" />
+    <Property Name="confirmTest" Type="bit" Nullable="false" />
+    <Property Name="confirmEos" Type="bit" Nullable="false" />
+    <Property Name="confirmSerial" Type="bit" Nullable="false" />
+    <Property Name="startDate" Type="datetime2" Precision="7" />
+    <Property Name="confirmDate" Type="datetime2" Precision="7" />
+    <Property Name="userId" Type="int" />
+    <Property Name="planDate" Type="datetime2" Precision="7" />
+    <Property Name="stepState" Type="smallint" />
+  </EntityType>
+  <Association Name="fkOrderProcessRefOrder">
+    <End Role="eOrder" Type="Self.eOrder" Multiplicity="1" />
+    <End Role="rOrderProcess" Type="Self.rOrderProcess" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="eOrder">
+        <PropertyRef Name="OrderId" />
+      </Principal>
+      <Dependent Role="rOrderProcess">
+        <PropertyRef Name="orderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fkOrderRefPcb">
+    <End Role="ePcb" Type="Self.ePcb" Multiplicity="1" />
+    <End Role="eOrder" Type="Self.eOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ePcb">
+        <PropertyRef Name="PcbId" />
+      </Principal>
+      <Dependent Role="eOrder">
+        <PropertyRef Name="PcbId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fkPcbRefMaterial">
+    <End Role="eMaterial" Type="Self.eMaterial" Multiplicity="1" />
+    <End Role="ePcb" Type="Self.ePcb" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="eMaterial">
+        <PropertyRef Name="MaterialId" />
+      </Principal>
+      <Dependent Role="ePcb">
+        <PropertyRef Name="PcbId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fkSerialRefOrder">
+    <End Role="eOrder" Type="Self.eOrder" Multiplicity="1" />
+    <End Role="eSerial" Type="Self.eSerial" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="eOrder">
+        <PropertyRef Name="OrderId" />
+      </Principal>
+      <Dependent Role="eSerial">
+        <PropertyRef Name="OrderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="EOSModelStoreContainer">
+    <EntitySet Name="eMaterial" EntityType="Self.eMaterial" Schema="eos" store:Type="Tables" />
+    <EntitySet Name="eOrder" EntityType="Self.eOrder" Schema="eos" store:Type="Tables" />
+    <EntitySet Name="ePcb" EntityType="Self.ePcb" Schema="eos" store:Type="Tables" />
+    <EntitySet Name="eSerial" EntityType="Self.eSerial" Schema="eos" store:Type="Tables" />
+    <EntitySet Name="rOrderProcess" EntityType="Self.rOrderProcess" Schema="eos" store:Type="Tables" />
+    <AssociationSet Name="fkOrderProcessRefOrder" Association="Self.fkOrderProcessRefOrder">
+      <End Role="eOrder" EntitySet="eOrder" />
+      <End Role="rOrderProcess" EntitySet="rOrderProcess" />
+    </AssociationSet>
+    <AssociationSet Name="fkOrderRefPcb" Association="Self.fkOrderRefPcb">
+      <End Role="ePcb" EntitySet="ePcb" />
+      <End Role="eOrder" EntitySet="eOrder" />
+    </AssociationSet>
+    <AssociationSet Name="fkPcbRefMaterial" Association="Self.fkPcbRefMaterial">
+      <End Role="eMaterial" EntitySet="eMaterial" />
+      <End Role="ePcb" EntitySet="ePcb" />
+    </AssociationSet>
+    <AssociationSet Name="fkSerialRefOrder" Association="Self.fkSerialRefOrder">
+      <End Role="eOrder" EntitySet="eOrder" />
+      <End Role="eSerial" EntitySet="eSerial" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

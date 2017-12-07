@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="EOSModelStoreContainer" CdmEntityContainer="EOSEntities">
+    <EntitySetMapping Name="eMaterials">
+      <EntityTypeMapping TypeName="EOSModel.eMaterial">
+        <MappingFragment StoreEntitySet="eMaterial">
+          <ScalarProperty Name="MaterialId" ColumnName="MaterialId" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="materialType" ColumnName="materialType" />
+          <ScalarProperty Name="materialClass" ColumnName="materialClass" />
+          <ScalarProperty Name="dispoAttribute" ColumnName="dispoAttribute" />
+          <ScalarProperty Name="priceVar" ColumnName="priceVar" />
+          <ScalarProperty Name="priceFix" ColumnName="priceFix" />
+          <ScalarProperty Name="priceControll" ColumnName="priceControll" />
+          <ScalarProperty Name="dispGroup" ColumnName="dispGroup" />
+          <ScalarProperty Name="purchGroup" ColumnName="purchGroup" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="eOrders">
+      <EntityTypeMapping TypeName="EOSModel.eOrder">
+        <MappingFragment StoreEntitySet="eOrder">
+          <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+          <ScalarProperty Name="PcbId" ColumnName="PcbId" />
+          <ScalarProperty Name="orderCreateDate" ColumnName="orderCreateDate" />
+          <ScalarProperty Name="orderFinishDate" ColumnName="orderFinishDate" />
+          <ScalarProperty Name="orderPcNew" ColumnName="orderPcNew" />
+          <ScalarProperty Name="orderPcActual" ColumnName="orderPcActual" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ePcbs">
+      <EntityTypeMapping TypeName="EOSModel.ePcb">
+        <MappingFragment StoreEntitySet="ePcb">
+          <ScalarProperty Name="PcbId" ColumnName="PcbId" />
+          <ScalarProperty Name="pcbTypeId" ColumnName="pcbTypeId" />
+          <ScalarProperty Name="pcbClassId" ColumnName="pcbClassId" />
+          <ScalarProperty Name="serialPrefix" ColumnName="serialPrefix" />
+          <ScalarProperty Name="topThtPartCount" ColumnName="topThtPartCount" />
+          <ScalarProperty Name="topSmtPartCount" ColumnName="topSmtPartCount" />
+          <ScalarProperty Name="botThtPartCount" ColumnName="botThtPartCount" />
+          <ScalarProperty Name="botSmtPartCount" ColumnName="botSmtPartCount" />
+          <ScalarProperty Name="thtSolderJoints" ColumnName="thtSolderJoints" />
+          <ScalarProperty Name="smtSolderJoints" ColumnName="smtSolderJoints" />
+          <ScalarProperty Name="squareInch" ColumnName="squareInch" />
+          <ScalarProperty Name="activationDate" ColumnName="activationDate" />
+          <ScalarProperty Name="decomissionDate" ColumnName="decomissionDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="eSerials">
+      <EntityTypeMapping TypeName="EOSModel.eSerial">
+        <MappingFragment StoreEntitySet="eSerial">
+          <ScalarProperty Name="SerialId" ColumnName="SerialId" />
+          <ScalarProperty Name="SerialIdEan" ColumnName="SerialIdEan" />
+          <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+          <ScalarProperty Name="status" ColumnName="status" />
+          <ScalarProperty Name="rootOrderId" ColumnName="rootOrderId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="rOrderProcesses">
+      <EntityTypeMapping TypeName="EOSModel.rOrderProcess">
+        <MappingFragment StoreEntitySet="rOrderProcess">
+          <ScalarProperty Name="orderId" ColumnName="orderId" />
+          <ScalarProperty Name="processId" ColumnName="processId" />
+          <ScalarProperty Name="processStep" ColumnName="processStep" />
+          <ScalarProperty Name="confirmTest" ColumnName="confirmTest" />
+          <ScalarProperty Name="confirmEos" ColumnName="confirmEos" />
+          <ScalarProperty Name="confirmSerial" ColumnName="confirmSerial" />
+          <ScalarProperty Name="startDate" ColumnName="startDate" />
+          <ScalarProperty Name="confirmDate" ColumnName="confirmDate" />
+          <ScalarProperty Name="userId" ColumnName="userId" />
+          <ScalarProperty Name="planDate" ColumnName="planDate" />
+          <ScalarProperty Name="stepState" ColumnName="stepState" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

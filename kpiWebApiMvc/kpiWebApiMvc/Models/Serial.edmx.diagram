@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="8e4cde37bf9248d8a19aaf7f9c61bd9a" Name="Diagram1">
+        <EntityTypeShape EntityType="EOSModel.eMaterial" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="EOSModel.eOrder" Width="1.5" PointX="5.25" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EOSModel.ePcb" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="EOSModel.eSerial" Width="1.5" PointX="10.375" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EOSModel.rOrderProcess" Width="1.5" PointX="8" PointY="2.875" IsExpanded="true" />
+        <AssociationConnector Association="EOSModel.fkPcbRefMaterial" ManuallyRouted="false" />
+        <AssociationConnector Association="EOSModel.fkOrderRefPcb" ManuallyRouted="false" />
+        <AssociationConnector Association="EOSModel.fkSerialRefOrder" ManuallyRouted="false" />
+        <AssociationConnector Association="EOSModel.fkOrderProcessRefOrder" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

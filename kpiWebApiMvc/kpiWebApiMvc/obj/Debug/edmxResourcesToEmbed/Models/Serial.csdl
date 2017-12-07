@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="EOSModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="eMaterial">
+    <Key>
+      <PropertyRef Name="MaterialId" />
+    </Key>
+    <Property Name="MaterialId" Type="Int32" Nullable="false" />
+    <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="materialType" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="materialClass" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="dispoAttribute" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+    <Property Name="priceVar" Type="Decimal" Precision="10" Scale="4" Nullable="false" />
+    <Property Name="priceFix" Type="Decimal" Precision="10" Scale="4" Nullable="false" />
+    <Property Name="priceControll" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="dispGroup" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+    <Property Name="purchGroup" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="ePcb" Relationship="Self.fkPcbRefMaterial" FromRole="eMaterial" ToRole="ePcb" />
+  </EntityType>
+  <EntityType Name="eOrder">
+    <Key>
+      <PropertyRef Name="OrderId" />
+    </Key>
+    <Property Name="OrderId" Type="Int32" Nullable="false" />
+    <Property Name="PcbId" Type="Int32" Nullable="false" />
+    <Property Name="orderCreateDate" Type="DateTime" Precision="0" />
+    <Property Name="orderFinishDate" Type="DateTime" Precision="0" />
+    <Property Name="orderPcNew" Type="Int16" Nullable="false" />
+    <Property Name="orderPcActual" Type="Int16" Nullable="false" />
+    <NavigationProperty Name="ePcb" Relationship="Self.fkOrderRefPcb" FromRole="eOrder" ToRole="ePcb" />
+    <NavigationProperty Name="eSerials" Relationship="Self.fkSerialRefOrder" FromRole="eOrder" ToRole="eSerial" />
+    <NavigationProperty Name="rOrderProcesses" Relationship="EOSModel.fkOrderProcessRefOrder" FromRole="eOrder" ToRole="rOrderProcess" />
+  </EntityType>
+  <EntityType Name="ePcb">
+    <Key>
+      <PropertyRef Name="PcbId" />
+    </Key>
+    <Property Name="PcbId" Type="Int32" Nullable="false" />
+    <Property Name="pcbTypeId" Type="Int32" Nullable="false" />
+    <Property Name="pcbClassId" Type="Int32" Nullable="false" />
+    <Property Name="serialPrefix" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="topThtPartCount" Type="Int32" Nullable="false" />
+    <Property Name="topSmtPartCount" Type="Int32" Nullable="false" />
+    <Property Name="botThtPartCount" Type="Int32" Nullable="false" />
+    <Property Name="botSmtPartCount" Type="Int32" Nullable="false" />
+    <Property Name="thtSolderJoints" Type="Int32" Nullable="false" />
+    <Property Name="smtSolderJoints" Type="Int32" Nullable="false" />
+    <Property Name="squareInch" Type="Single" Nullable="false" />
+    <Property Name="activationDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="decomissionDate" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="eMaterial" Relationship="Self.fkPcbRefMaterial" FromRole="ePcb" ToRole="eMaterial" />
+    <NavigationProperty Name="eOrders" Relationship="Self.fkOrderRefPcb" FromRole="ePcb" ToRole="eOrder" />
+  </EntityType>
+  <EntityType Name="eSerial">
+    <Key>
+      <PropertyRef Name="SerialId" />
+    </Key>
+    <Property Name="SerialId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SerialIdEan" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+    <Property Name="OrderId" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Int16" Nullable="false" />
+    <Property Name="rootOrderId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="eOrder" Relationship="Self.fkSerialRefOrder" FromRole="eSerial" ToRole="eOrder" />
+  </EntityType>
+  <EntityType Name="rOrderProcess">
+    <Key>
+      <PropertyRef Name="orderId" />
+      <PropertyRef Name="processId" />
+    </Key>
+    <Property Name="orderId" Type="Int32" Nullable="false" />
+    <Property Name="processId" Type="Int32" Nullable="false" />
+    <Property Name="processStep" Type="Int16" Nullable="false" />
+    <Property Name="confirmTest" Type="Boolean" Nullable="false" />
+    <Property Name="confirmEos" Type="Boolean" Nullable="false" />
+    <Property Name="confirmSerial" Type="Boolean" Nullable="false" />
+    <Property Name="startDate" Type="DateTime" Precision="7" />
+    <Property Name="confirmDate" Type="DateTime" Precision="7" />
+    <Property Name="userId" Type="Int32" />
+    <Property Name="planDate" Type="DateTime" Precision="7" />
+    <Property Name="stepState" Type="Int16" />
+    <NavigationProperty Name="eOrder" Relationship="EOSModel.fkOrderProcessRefOrder" FromRole="rOrderProcess" ToRole="eOrder" />
+  </EntityType>
+  <Association Name="fkPcbRefMaterial">
+    <End Role="eMaterial" Type="Self.eMaterial" Multiplicity="1" />
+    <End Role="ePcb" Type="Self.ePcb" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="eMaterial">
+        <PropertyRef Name="MaterialId" />
+      </Principal>
+      <Dependent Role="ePcb">
+        <PropertyRef Name="PcbId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fkOrderRefPcb">
+    <End Role="ePcb" Type="Self.ePcb" Multiplicity="1" />
+    <End Role="eOrder" Type="Self.eOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ePcb">
+        <PropertyRef Name="PcbId" />
+      </Principal>
+      <Dependent Role="eOrder">
+        <PropertyRef Name="PcbId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fkSerialRefOrder">
+    <End Role="eOrder" Type="Self.eOrder" Multiplicity="1" />
+    <End Role="eSerial" Type="Self.eSerial" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="eOrder">
+        <PropertyRef Name="OrderId" />
+      </Principal>
+      <Dependent Role="eSerial">
+        <PropertyRef Name="OrderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="EOSEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="eMaterials" EntityType="Self.eMaterial" />
+    <EntitySet Name="eOrders" EntityType="Self.eOrder" />
+    <EntitySet Name="ePcbs" EntityType="Self.ePcb" />
+    <EntitySet Name="eSerials" EntityType="Self.eSerial" />
+    <EntitySet Name="rOrderProcesses" EntityType="Self.rOrderProcess" />
+    <AssociationSet Name="fkPcbRefMaterial" Association="Self.fkPcbRefMaterial">
+      <End Role="eMaterial" EntitySet="eMaterials" />
+      <End Role="ePcb" EntitySet="ePcbs" />
+    </AssociationSet>
+    <AssociationSet Name="fkOrderRefPcb" Association="Self.fkOrderRefPcb">
+      <End Role="ePcb" EntitySet="ePcbs" />
+      <End Role="eOrder" EntitySet="eOrders" />
+    </AssociationSet>
+    <AssociationSet Name="fkSerialRefOrder" Association="Self.fkSerialRefOrder">
+      <End Role="eOrder" EntitySet="eOrders" />
+      <End Role="eSerial" EntitySet="eSerials" />
+    </AssociationSet>
+    <AssociationSet Name="fkOrderProcessRefOrder" Association="EOSModel.fkOrderProcessRefOrder">
+      <End Role="eOrder" EntitySet="eOrders" />
+      <End Role="rOrderProcess" EntitySet="rOrderProcesses" />
+    </AssociationSet>
+  </EntityContainer>
+  <Association Name="fkOrderProcessRefOrder">
+    <End Type="EOSModel.eOrder" Role="eOrder" Multiplicity="1" />
+    <End Type="EOSModel.rOrderProcess" Role="rOrderProcess" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="eOrder">
+        <PropertyRef Name="OrderId" />
+      </Principal>
+      <Dependent Role="rOrderProcess">
+        <PropertyRef Name="orderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>
